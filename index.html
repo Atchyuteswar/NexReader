@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexReader — Product Requirements Document</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #050508;
+    --deep: #0a0a12;
+    --panel: #0f0f1a;
+    --surface: #141420;
+    --card: #1a1a28;
+    --border: rgba(120,120,200,0.12);
+    --border-bright: rgba(140,140,220,0.25);
+    --accent: #6C63FF;
+    --accent2: #00D9C0;
+    --accent3: #FF6B9D;
+    --accent4: #FFB347;
+    --text-primary: #E8E8F0;
+    --text-secondary: #9898B8;
+    --text-muted: #555570;
+    --glow: rgba(108,99,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--void);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* COVER PAGE */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 4rem 2rem;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(108,99,255,0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 20%, rgba(0,217,192,0.05) 0%, transparent 60%),
+                var(--void);
+  }
+
+  .cover-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(108,99,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108,99,255,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+  }
+
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(108,99,255,0.1);
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+
+  .cover-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+    box-shadow: 0 0 8px var(--accent2);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .cover h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff 0%, #a8a4ff 40%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cover-tagline {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    max-width: 500px;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .cover-meta-item strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  /* NAVIGATION */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5,5,8,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar { display: none; }
+
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .nav-links a:hover {
+    background: rgba(108,99,255,0.1);
+    color: var(--text-primary);
+  }
+
+  /* LAYOUT */
+  .doc {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  /* SECTION HEADERS */
+  .section {
+    margin-bottom: 5rem;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-bright), transparent);
+    max-width: 200px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    color: #fff;
+  }
+
+  .section-title span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 15px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+  }
+
+  .card-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .card-grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card-grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .card-grid-4 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 0.75rem;
+  }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .card p {
+    font-size: 13.5px;
+    margin-bottom: 0;
+  }
+
+  /* ACCENT CARD VARIANTS */
+  .card-accent-purple { border-color: rgba(108,99,255,0.3); }
+  .card-accent-purple .card-icon { background: rgba(108,99,255,0.15); }
+  .card-accent-teal { border-color: rgba(0,217,192,0.25); }
+  .card-accent-teal .card-icon { background: rgba(0,217,192,0.12); }
+  .card-accent-pink { border-color: rgba(255,107,157,0.25); }
+  .card-accent-pink .card-icon { background: rgba(255,107,157,0.12); }
+  .card-accent-amber { border-color: rgba(255,179,71,0.25); }
+  .card-accent-amber .card-icon { background: rgba(255,179,71,0.12); }
+
+  /* HIGHLIGHT BOXES */
+  .highlight {
+    border-left: 3px solid var(--accent);
+    background: rgba(108,99,255,0.06);
+    border-radius: 0 12px 12px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .highlight-teal { border-left-color: var(--accent2); background: rgba(0,217,192,0.05); }
+  .highlight-pink { border-left-color: var(--accent3); background: rgba(255,107,157,0.05); }
+
+  .highlight p { margin: 0; color: var(--text-secondary); }
+
+  /* FEATURE TABLE */
+  .feature-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 14px;
+  }
+
+  .feature-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .feature-table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+
+  .feature-table tr:last-child td { border-bottom: none; }
+
+  .feature-table tr:hover td {
+    background: rgba(108,99,255,0.04);
+  }
+
+  /* PRIORITY BADGES */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .badge-p0 { background: rgba(255,107,157,0.15); color: #FF6B9D; border: 1px solid rgba(255,107,157,0.3); }
+  .badge-p1 { background: rgba(255,179,71,0.15); color: #FFB347; border: 1px solid rgba(255,179,71,0.3); }
+  .badge-p2 { background: rgba(108,99,255,0.15); color: #8B7FFF; border: 1px solid rgba(108,99,255,0.3); }
+  .badge-p3 { background: rgba(0,217,192,0.1); color: #00C9B1; border: 1px solid rgba(0,217,192,0.25); }
+
+  /* TECH STACK PILLS */
+  .tech-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .tech-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-secondary);
+  }
+
+  .tech-pill-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 1.5rem 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -2rem;
+    top: 4px;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--void);
+    box-shadow: 0 0 12px rgba(108,99,255,0.6);
+  }
+
+  .timeline-phase {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .timeline-body {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* METRIC ROW */
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .metric-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.25rem;
+  }
+
+  .metric-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* DATABASE SCHEMA */
+  .schema-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .schema-table-header {
+    background: rgba(108,99,255,0.12);
+    padding: 0.75rem 1rem;
+    color: var(--accent);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .schema-table-row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid rgba(120,120,200,0.06);
+    align-items: baseline;
+  }
+
+  .schema-table-row:last-child { border-bottom: none; }
+
+  .schema-field { color: var(--text-primary); min-width: 160px; flex-shrink: 0; }
+  .schema-type { color: var(--accent2); min-width: 100px; flex-shrink: 0; font-size: 11.5px; }
+  .schema-desc { color: var(--text-muted); font-size: 12px; }
+  .schema-pk { color: var(--accent4); font-size: 10px; background: rgba(255,179,71,0.1); padding: 1px 6px; border-radius: 4px; flex-shrink: 0; }
+  .schema-fk { color: var(--accent3); font-size: 10px; background: rgba(255,107,157,0.1); padding: 1px 6px; border-radius: 4px; flex-shrink: 0; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 4rem 0;
+  }
+
+  /* LIST */
+  ul.feature-list {
+    list-style: none;
+    margin: 1rem 0;
+  }
+
+  ul.feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0.5rem 0;
+    font-size: 14.5px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(120,120,200,0.06);
+  }
+
+  ul.feature-list li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+    font-size: 12px;
+    margin-top: 3px;
+  }
+
+  /* INLINE CODE */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: rgba(108,99,255,0.12);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* MEGA FEATURE CARD */
+  .mega-card {
+    background: linear-gradient(135deg, var(--card) 0%, rgba(108,99,255,0.05) 100%);
+    border: 1px solid var(--border-bright);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mega-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(108,99,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .mega-card-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    position: absolute;
+    top: -0.5rem;
+    right: 1.5rem;
+    color: rgba(108,99,255,0.07);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .mega-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .mega-card-sub {
+    font-size: 13px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.75rem;
+  }
+
+  .mega-card p {
+    font-size: 14px;
+    margin-bottom: 0.75rem;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: rgba(108,99,255,0.3); border-radius: 3px; }
+
+  @media print {
+    .nav { display: none; }
+    .cover-grid { display: none; }
+    body { background: white; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-badge">PRD · v1.0 · CONFIDENTIAL</div>
+  <h1>NexReader</h1>
+  <p class="cover-tagline">The future-forward tablet reading experience — every format, every book, everywhere.</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <strong>Version</strong>
+      1.0 — Initial Release
+    </div>
+    <div class="cover-meta-item">
+      <strong>Date</strong>
+      March 2026
+    </div>
+    <div class="cover-meta-item">
+      <strong>Platform</strong>
+      iOS · Android Tablet
+    </div>
+    <div class="cover-meta-item">
+      <strong>Status</strong>
+      Pre-Development
+    </div>
+    <div class="cover-meta-item">
+      <strong>Doc Owner</strong>
+      Product Team
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <div class="nav-brand">NexReader PRD</div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#users">Users</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#formats">Formats</a></li>
+    <li><a href="#ai">AI Engine</a></li>
+    <li><a href="#auth">Auth</a></li>
+    <li><a href="#database">Database</a></li>
+    <li><a href="#cloud">Cloud</a></li>
+    <li><a href="#ux">UX Design</a></li>
+    <li><a href="#tech">Tech Stack</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#metrics">Metrics</a></li>
+  </ul>
+</nav>
+
+<div class="doc">
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section" id="overview">
+    <div class="section-label">01 · Executive Summary</div>
+    <h2 class="section-title">What is <span>NexReader</span>?</h2>
+
+    <p>NexReader is a next-generation, AI-augmented e-book and document reading platform designed natively for tablets. It bridges the gap between a personal digital library, an intelligent reading assistant, and a social knowledge platform — all wrapped in a futuristic interface that feels alive and personal.</p>
+
+    <p>Unlike existing readers that are glorified PDF viewers, NexReader is built from the ground up around three pillars: <strong style="color:var(--text-primary)">universal format support</strong>, <strong style="color:var(--text-primary)">AI-powered comprehension tools</strong>, and <strong style="color:var(--text-primary)">seamless cloud persistence</strong>. Every annotation, highlight, reading session, and personal insight is saved, synced, and searchable across all user devices.</p>
+
+    <div class="highlight">
+      <p><strong style="color:var(--text-primary)">Mission Statement:</strong> Empower every reader to engage more deeply with knowledge — no matter the format, no matter the device, no matter where they are in the world.</p>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-value">20+</div>
+        <div class="metric-label">File Formats</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">∞</div>
+        <div class="metric-label">Cloud Library</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">AI</div>
+        <div class="metric-label">Reading Engine</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">0ms</div>
+        <div class="metric-label">Sync Latency Goal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TARGET USERS -->
+  <div class="section" id="users">
+    <div class="section-label">02 · Target Users</div>
+    <h2 class="section-title">Who reads with <span>NexReader</span>?</h2>
+
+    <div class="card-grid card-grid-2">
+      <div class="card card-accent-purple">
+        <div class="card-icon" style="font-size:22px">📚</div>
+        <h3>The Avid Reader</h3>
+        <p>Reads 3–10 books/month. Switches between fiction, non-fiction, self-help. Wants beautiful typography, distraction-free reading, and a way to track progress across a large personal library.</p>
+      </div>
+      <div class="card card-accent-teal">
+        <div class="card-icon" style="font-size:22px">🎓</div>
+        <h3>The Student</h3>
+        <p>Deals with PDFs, textbooks, and research papers daily. Needs annotation tools, citation export, AI summarisation, and the ability to highlight and organise notes by course or topic.</p>
+      </div>
+      <div class="card card-accent-pink">
+        <div class="card-icon" style="font-size:22px">💼</div>
+        <h3>The Professional</h3>
+        <p>Reading contracts, reports, technical documentation, and whitepapers. Needs fast search, cross-document referencing, cloud team sharing, and secure document handling.</p>
+      </div>
+      <div class="card card-accent-amber">
+        <div class="card-icon" style="font-size:22px">✍️</div>
+        <h3>The Researcher / Writer</h3>
+        <p>Reads to write. Wants deep quote extraction, connected notes, topic clustering, and AI assistance in generating summaries and analysis across dozens of sources simultaneously.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CORE FEATURES -->
+  <div class="section" id="features">
+    <div class="section-label">03 · Core Feature Set</div>
+    <h2 class="section-title">Feature <span>Architecture</span></h2>
+
+    <p>Features are grouped into five capability domains. Each domain contains must-have (P0), should-have (P1), and future (P2/P3) features to guide sprint prioritisation.</p>
+
+    <!-- DOMAIN 1 -->
+    <div class="mega-card">
+      <div class="mega-card-number">01</div>
+      <div class="mega-card-sub">DOMAIN 1 · READING EXPERIENCE</div>
+      <h3>The Core Reader</h3>
+      <p>The foundation. Everything that makes reading on NexReader superior to any other app. The reading view must be extraordinary — every pixel of the experience is intentional.</p>
+
+      <table class="feature-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Description</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Adaptive Typography Engine</strong></td>
+            <td>User-controlled font family, size, weight, line height, letter spacing, and column width. 30+ curated fonts including dyslexia-friendly options.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Intelligent Night / Day Modes</strong></td>
+            <td>Auto-switching based on ambient light. Sepia, paper, dark, AMOLED black, and custom colour themes. Per-book theme memory.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Continuous Scroll & Paginated Modes</strong></td>
+            <td>Toggle between scroll and page-flip mode. Smooth page-turn animations with physics-based feel. Horizontal & vertical reading directions.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Focus Mode</strong></td>
+            <td>Dims all UI chrome. Single paragraph spotlight (dims everything except the active paragraph). Bionic reading support. Pomodoro reading timer built in.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Immersive Cover View</strong></td>
+            <td>Full-screen animated cover art on book open. Ambient background colour derived from book cover palette.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Text-to-Speech (TTS)</strong></td>
+            <td>Natural AI voices with adjustable speed. Follows reading position. Multiple language support. Word-by-word highlight sync.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Split View Reading</strong></td>
+            <td>Two books side by side on tablet. Compare chapters, read original vs. translation simultaneously.</td>
+            <td><span class="badge badge-p2">P2 · FUTURE</span></td>
+          </tr>
+          <tr>
+            <td><strong>3D Page Shader / AR Mode</strong></td>
+            <td>Optional ARKit / ARCore layer to "place" a book on a table surface. Experimental, opt-in feature.</td>
+            <td><span class="badge badge-p3">P3 · VISION</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- DOMAIN 2 -->
+    <div class="mega-card">
+      <div class="mega-card-number">02</div>
+      <div class="mega-card-sub">DOMAIN 2 · ANNOTATIONS & KNOWLEDGE</div>
+      <h3>Capture & Connect Ideas</h3>
+      <p>Every great reader annotates. NexReader transforms passive reading into active knowledge building — every highlight, note, and thought is indexed and interconnected.</p>
+
+      <table class="feature-table">
+        <thead>
+          <tr><th>Feature</th><th>Description</th><th>Priority</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Multi-colour Highlighting</strong></td>
+            <td>7 highlight colours, each mappable to a custom category label (e.g., "Important", "Disagree", "Quote"). Freehand highlight gestures.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Inline & Margin Notes</strong></td>
+            <td>Typed or voice notes attached to any passage. Margin annotations visible in reading view. Rich text formatting for notes.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Apple Pencil / Stylus Handwriting</strong></td>
+            <td>Full handwriting support with pressure sensitivity. Auto-recognition of handwritten notes to text (OCR). Sketch drawings in margin.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Knowledge Graph</strong></td>
+            <td>Visual node-based map of all highlights and notes across the entire library. Automatically clusters by topic, character, theme, or concept.</td>
+            <td><span class="badge badge-p2">P2 · FUTURE</span></td>
+          </tr>
+          <tr>
+            <td><strong>Citation & Export Engine</strong></td>
+            <td>Export highlights and notes as Markdown, PDF, Notion, Obsidian, Word, or BibTeX. Full APA/MLA/Chicago citation formatting for academic use.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Annotation Versioning</strong></td>
+            <td>Full history of all edits to notes and highlights. Restore previous versions. Conflict-free sync with CRDT data model.</td>
+            <td><span class="badge badge-p2">P2 · FUTURE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- DOMAIN 3 -->
+    <div class="mega-card">
+      <div class="mega-card-number">03</div>
+      <div class="mega-card-sub">DOMAIN 3 · LIBRARY & DISCOVERY</div>
+      <h3>Your Personal Digital Library</h3>
+      <p>A world-class library management system. Search, organise, discover, and import books from any source — with a gorgeous visual interface that makes your collection a joy to browse.</p>
+
+      <table class="feature-table">
+        <thead>
+          <tr><th>Feature</th><th>Description</th><th>Priority</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Smart Shelves</strong></td>
+            <td>Auto-organising shelves by genre, author, reading status, read date, language. Custom manual shelves with drag-and-drop.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Visual Library Modes</strong></td>
+            <td>3D shelf view, grid cover view, list view, and a "cinematic" full-bleed scroll mode with dynamic colour backgrounds per book.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Import from Anywhere</strong></td>
+            <td>Import via local files, URL, cloud drives (Google Drive, Dropbox, iCloud, OneDrive), Calibre library, email attachment, or camera scan.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Open Library & Gutenberg Integration</strong></td>
+            <td>Browse and download 70,000+ free books from Project Gutenberg and Open Library directly inside the app, with full metadata.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Reading Statistics Dashboard</strong></td>
+            <td>Daily/weekly/monthly read time, pages per session, words per minute, yearly reading goals, streak tracking. Shareable reading cards.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Duplicate Detector</strong></td>
+            <td>AI-powered deduplication across formats. Merges highlights if same book in multiple formats.</td>
+            <td><span class="badge badge-p2">P2 · FUTURE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- DOMAIN 4 -->
+    <div class="mega-card">
+      <div class="mega-card-number">04</div>
+      <div class="mega-card-sub">DOMAIN 4 · SOCIAL & SHARING</div>
+      <h3>Reading Together</h3>
+      <p>Books are meant to be shared. NexReader builds a social layer for readers — book clubs, shared annotations, friend activity, and community reviews.</p>
+
+      <table class="feature-table">
+        <thead>
+          <tr><th>Feature</th><th>Description</th><th>Priority</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Reading Groups / Book Clubs</strong></td>
+            <td>Create or join a book club. Shared reading schedule, shared annotation layer, group chat, weekly discussion prompts.</td>
+            <td><span class="badge badge-p2">P2 · FUTURE</span></td>
+          </tr>
+          <tr>
+            <td><strong>Share Quotes & Highlights</strong></td>
+            <td>Beautifully formatted quote cards for Instagram, Twitter/X, WhatsApp. Custom card templates per book cover aesthetic.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>Public Bookshelves</strong></td>
+            <td>Opt-in public profile showing reading history and current reads. Follow other readers. Activity feed of what friends are reading.</td>
+            <td><span class="badge badge-p2">P2 · FUTURE</span></td>
+          </tr>
+          <tr>
+            <td><strong>Review & Rating System</strong></td>
+            <td>In-app book reviews with 5-star rating, tags, spoiler warnings. Community aggregate rating visible on book detail pages.</td>
+            <td><span class="badge badge-p2">P2 · FUTURE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- DOMAIN 5 -->
+    <div class="mega-card">
+      <div class="mega-card-number">05</div>
+      <div class="mega-card-sub">DOMAIN 5 · ACCESSIBILITY</div>
+      <h3>Reading for Everyone</h3>
+      <p>Accessibility is not a feature — it is a foundation. NexReader is built to be the most accessible reading app on any platform.</p>
+
+      <table class="feature-table">
+        <thead>
+          <tr><th>Feature</th><th>Description</th><th>Priority</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Full Screen Reader Support</strong></td>
+            <td>100% VoiceOver (iOS) and TalkBack (Android) compatibility. All controls labelled. Reading content fully navigable by screen reader.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dyslexia Mode</strong></td>
+            <td>OpenDyslexic font, increased letter spacing, coloured overlays, syllable highlighting. Bionic Reading mode.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+          <tr>
+            <td><strong>High Contrast & Colour Blind Modes</strong></td>
+            <td>Full WCAG 2.1 AAA compliance option. Colour-blind safe palette options for UI and highlights.</td>
+            <td><span class="badge badge-p0">P0 · MUST</span></td>
+          </tr>
+          <tr>
+            <td><strong>Motor Accessibility</strong></td>
+            <td>Switch Access, AssistiveTouch, large tap targets, Switch Control. One-handed reading mode with reachable controls.</td>
+            <td><span class="badge badge-p1">P1 · SHOULD</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SUPPORTED FORMATS -->
+  <div class="section" id="formats">
+    <div class="section-label">04 · Universal Format Support</div>
+    <h2 class="section-title">Every Format, <span>Zero Exceptions</span></h2>
+
+    <p>NexReader's format parser is built on a modular rendering engine. Each format has a dedicated rendering pipeline, with a unified annotation layer sitting on top. Users should never need to know or care what format a file is — it just opens.</p>
+
+    <div class="card-grid card-grid-3">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(108,99,255,0.15); color:var(--accent)">📖</div>
+        <h3>E-Book Formats</h3>
+        <ul class="feature-list" style="margin-top:0.5rem">
+          <li>EPUB 2 & 3 (full spec)</li>
+          <li>EPUB Fixed Layout</li>
+          <li>MOBI / AZW / AZW3</li>
+          <li>KFX (Kindle)</li>
+          <li>LIT, PDB, PRC</li>
+          <li>FB2 / FB3 (FictionBook)</li>
+          <li>CBZ / CBR (Comics)</li>
+          <li>DJVU</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(0,217,192,0.12); color:var(--accent2)">📄</div>
+        <h3>Document Formats</h3>
+        <ul class="feature-list" style="margin-top:0.5rem">
+          <li>PDF (including scanned/OCR)</li>
+          <li>XPS / OXPS</li>
+          <li>DOCX / DOC (Word)</li>
+          <li>ODT (OpenDocument)</li>
+          <li>RTF</li>
+          <li>TXT / Plain Text</li>
+          <li>HTML / XHTML / MHT</li>
+          <li>Markdown (.md)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,179,71,0.12); color:var(--accent4)">🔬</div>
+        <h3>Research & Academic</h3>
+        <ul class="feature-list" style="margin-top:0.5rem">
+          <li>LaTeX / PDF-LaTeX output</li>
+          <li>XML / DocBook</li>
+          <li>JATS (Journal Article)</li>
+          <li>RSS / Atom feeds</li>
+          <li>arXiv paper import</li>
+          <li>DOI / ISBN auto-fetch</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight highlight-teal" style="margin-top:1.5rem">
+      <p><strong style="color:var(--accent2)">OCR Engine:</strong> Scanned PDFs and image-based documents are automatically processed through an on-device OCR pipeline (Vision framework on iOS, ML Kit on Android) to make them fully searchable and annotatable — even if originally just a photo of a page.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- AI ENGINE -->
+  <div class="section" id="ai">
+    <div class="section-label">05 · AI Reading Engine</div>
+    <h2 class="section-title">Your Intelligent <span>Reading Companion</span></h2>
+
+    <p>NexReader ships with a deeply integrated AI layer — not a chatbot bolted on, but a reading companion that understands the book you are reading and helps you engage with it more deeply. The AI engine is powered by a combination of on-device models for privacy and cloud LLMs for depth.</p>
+
+    <div class="card-grid card-grid-2">
+      <div class="card card-accent-purple">
+        <div class="card-icon">🧠</div>
+        <h3>AI Summarisation</h3>
+        <p>Instant chapter summaries, section summaries, and full-book summaries. "Catch me up" feature explains what happened before a long reading gap. Adjustable summary length and depth.</p>
+      </div>
+      <div class="card card-accent-teal">
+        <div class="card-icon">💬</div>
+        <h3>Ask the Book</h3>
+        <p>Natural language Q&A grounded entirely in the text. Ask "Who is the villain in chapter 5?" or "What is the author's argument about inflation?" — answers are cited with page references.</p>
+      </div>
+      <div class="card card-accent-pink">
+        <div class="card-icon">🔤</div>
+        <h3>Vocabulary Intelligence</h3>
+        <p>Long-press any word for instant dictionary, etymology, translation, and usage examples. "Word web" shows how a word is used across the entire book. Saves words to a personal vocabulary list.</p>
+      </div>
+      <div class="card card-accent-amber">
+        <div class="card-icon">🗺️</div>
+        <h3>Character & Entity Maps</h3>
+        <p>Automatically builds and updates a character relationship map as you read. Tracks place names, organisations, dates, and events. Spoiler-safe — only shows what you've already read.</p>
+      </div>
+      <div class="card card-accent-purple">
+        <div class="card-icon">📝</div>
+        <h3>AI Note Enhancement</h3>
+        <p>Your rough margin notes are expanded into polished, structured summaries. AI suggests connections between your notes across different books in the library.</p>
+      </div>
+      <div class="card card-accent-teal">
+        <div class="card-icon">🎯</div>
+        <h3>Reading Speed & Comprehension Coach</h3>
+        <p>Tracks WPM, asks periodic comprehension check-in questions, adjusts reading recommendations. Provides personalised tips to improve reading efficiency over time.</p>
+      </div>
+      <div class="card card-accent-pink">
+        <div class="card-icon">🌐</div>
+        <h3>Translation Layer</h3>
+        <p>Real-time paragraph translation into 50+ languages. Dual-language view showing original and translation side-by-side. Preserves formatting and layout.</p>
+      </div>
+      <div class="card card-accent-amber">
+        <div class="card-icon">💡</div>
+        <h3>Smart Recommendations</h3>
+        <p>AI analyses reading habits, genres, themes in annotations, and pacing to recommend next books. Cross-references with Open Library and community lists.</p>
+      </div>
+    </div>
+
+    <div class="highlight highlight-pink" style="margin-top:1.5rem">
+      <p><strong style="color:var(--accent3)">Privacy First:</strong> All on-device AI features (vocabulary, OCR, basic summarisation) use Apple Neural Engine / Android NPU and never leave the device. Cloud AI features (deep Q&A, knowledge graph) are opt-in, with data processed through encrypted pipelines and not used for training. Enterprise plan includes fully on-premise AI option.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- AUTH SYSTEM -->
+  <div class="section" id="auth">
+    <div class="section-label">06 · Authentication System</div>
+    <h2 class="section-title">Identity & <span>Access</span></h2>
+
+    <p>Authentication is handled by a robust, multi-provider identity system. Security is non-negotiable — user data, books, and annotations must be protected to the highest standard.</p>
+
+    <div class="card-grid card-grid-2" style="margin-bottom:1.5rem">
+      <div class="card card-accent-purple">
+        <h3>Social / SSO Login</h3>
+        <ul class="feature-list" style="margin-top:0.5rem">
+          <li>Sign in with Apple (iOS mandatory)</li>
+          <li>Sign in with Google</li>
+          <li>Sign in with GitHub (for developers)</li>
+          <li>Facebook / Meta OAuth</li>
+        </ul>
+      </div>
+      <div class="card card-accent-teal">
+        <h3>Native Credentials</h3>
+        <ul class="feature-list" style="margin-top:0.5rem">
+          <li>Email + password (hashed with bcrypt)</li>
+          <li>Magic link / passwordless email</li>
+          <li>Biometric (Face ID / Touch ID)</li>
+          <li>TOTP 2FA (Google Authenticator etc.)</li>
+        </ul>
+      </div>
+    </div>
+
+    <table class="feature-table">
+      <thead>
+        <tr><th>Security Feature</th><th>Implementation</th><th>Standard</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>JWT Session Tokens</td>
+          <td>Short-lived access tokens (15 min) + rotating refresh tokens (30 days). Stored in secure enclave / Keychain.</td>
+          <td><code>OAuth 2.0 / PKCE</code></td>
+        </tr>
+        <tr>
+          <td>Password Policy</td>
+          <td>Minimum 12 chars, strength meter, breach detection via HaveIBeenPwned API. No password recycling.</td>
+          <td><code>NIST SP 800-63B</code></td>
+        </tr>
+        <tr>
+          <td>Rate Limiting</td>
+          <td>5 failed login attempts → 15-minute lockout → exponential backoff. Captcha on 3rd attempt.</td>
+          <td><code>OWASP</code></td>
+        </tr>
+        <tr>
+          <td>Device Management</td>
+          <td>Users can view and revoke all active sessions from any device in the Security Settings screen.</td>
+          <td><code>In-App</code></td>
+        </tr>
+        <tr>
+          <td>Data Encryption</td>
+          <td>All user data encrypted at rest (AES-256) and in transit (TLS 1.3). Books stored in encrypted S3-compatible bucket per user.</td>
+          <td><code>AES-256 / TLS 1.3</code></td>
+        </tr>
+        <tr>
+          <td>Account Recovery</td>
+          <td>Recovery codes (8 codes, one-time use), email recovery, and trusted device recovery. Admin account recovery for Enterprise.</td>
+          <td><code>In-App</code></td>
+        </tr>
+        <tr>
+          <td>GDPR / Privacy</td>
+          <td>One-click data export (all books, annotations, preferences as ZIP). Account deletion within 30 days. Right to be forgotten.</td>
+          <td><code>GDPR Art. 17/20</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight">
+      <p><strong style="color:var(--text-primary)">Subscription Tiers:</strong> Free (5 books, 1GB cloud storage, basic AI) · Reader Pro $4.99/mo (unlimited books, 50GB, full AI) · Scholar $9.99/mo (everything + citation tools, OCR, TTS, priority support) · Enterprise (custom pricing, SSO, admin dashboard, on-premise option).</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- DATABASE -->
+  <div class="section" id="database">
+    <div class="section-label">07 · Database Architecture</div>
+    <h2 class="section-title">Data <span>Model</span></h2>
+
+    <p>NexReader uses a hybrid database strategy: PostgreSQL for relational user/library data, Redis for session management and caching, a dedicated vector database for AI semantic search, and object storage (S3-compatible) for book files.</p>
+
+    <!-- Users Table -->
+    <div class="schema-table">
+      <div class="schema-table-header">users</div>
+      <div class="schema-table-row"><span class="schema-field">id</span><span class="schema-type">UUID</span><span class="schema-pk">PK</span><span class="schema-desc">Primary key, generated v4</span></div>
+      <div class="schema-table-row"><span class="schema-field">email</span><span class="schema-type">VARCHAR(255)</span><span class="schema-desc">Unique, indexed, lowercase</span></div>
+      <div class="schema-table-row"><span class="schema-field">display_name</span><span class="schema-type">VARCHAR(100)</span><span class="schema-desc">Public display name</span></div>
+      <div class="schema-table-row"><span class="schema-field">avatar_url</span><span class="schema-type">TEXT</span><span class="schema-desc">CDN URL for avatar image</span></div>
+      <div class="schema-table-row"><span class="schema-field">auth_provider</span><span class="schema-type">ENUM</span><span class="schema-desc">email | apple | google | github</span></div>
+      <div class="schema-table-row"><span class="schema-field">password_hash</span><span class="schema-type">VARCHAR(72)</span><span class="schema-desc">bcrypt hash, nullable for SSO</span></div>
+      <div class="schema-table-row"><span class="schema-field">subscription_tier</span><span class="schema-type">ENUM</span><span class="schema-desc">free | pro | scholar | enterprise</span></div>
+      <div class="schema-table-row"><span class="schema-field">subscription_expires_at</span><span class="schema-type">TIMESTAMPTZ</span><span class="schema-desc">Null = free forever tier</span></div>
+      <div class="schema-table-row"><span class="schema-field">storage_used_bytes</span><span class="schema-type">BIGINT</span><span class="schema-desc">Real-time storage counter</span></div>
+      <div class="schema-table-row"><span class="schema-field">preferences</span><span class="schema-type">JSONB</span><span class="schema-desc">Font, theme, AI settings (entire UI state)</span></div>
+      <div class="schema-table-row"><span class="schema-field">created_at</span><span class="schema-type">TIMESTAMPTZ</span><span class="schema-desc">Account creation timestamp</span></div>
+      <div class="schema-table-row"><span class="schema-field">last_active_at</span><span class="schema-type">TIMESTAMPTZ</span><span class="schema-desc">Last session activity</span></div>
+    </div>
+
+    <!-- Books Table -->
+    <div class="schema-table">
+      <div class="schema-table-header">books</div>
+      <div class="schema-table-row"><span class="schema-field">id</span><span class="schema-type">UUID</span><span class="schema-pk">PK</span><span class="schema-desc">Primary key</span></div>
+      <div class="schema-table-row"><span class="schema-field">user_id</span><span class="schema-type">UUID</span><span class="schema-fk">FK</span><span class="schema-desc">References users.id (CASCADE DELETE)</span></div>
+      <div class="schema-table-row"><span class="schema-field">title</span><span class="schema-type">TEXT</span><span class="schema-desc">Full title, extracted from metadata or filename</span></div>
+      <div class="schema-table-row"><span class="schema-field">author</span><span class="schema-type">TEXT</span><span class="schema-desc">Primary author string (denormalised for speed)</span></div>
+      <div class="schema-table-row"><span class="schema-field">isbn</span><span class="schema-type">VARCHAR(20)</span><span class="schema-desc">ISBN-10 or ISBN-13, nullable</span></div>
+      <div class="schema-table-row"><span class="schema-field">format</span><span class="schema-type">ENUM</span><span class="schema-desc">epub | pdf | mobi | docx | txt | cbz | …</span></div>
+      <div class="schema-table-row"><span class="schema-field">file_key</span><span class="schema-type">TEXT</span><span class="schema-desc">S3 object key for encrypted file</span></div>
+      <div class="schema-table-row"><span class="schema-field">file_size_bytes</span><span class="schema-type">BIGINT</span><span class="schema-desc">File size after encryption</span></div>
+      <div class="schema-table-row"><span class="schema-field">cover_url</span><span class="schema-type">TEXT</span><span class="schema-desc">CDN URL for extracted/fetched cover image</span></div>
+      <div class="schema-table-row"><span class="schema-field">cover_palette</span><span class="schema-type">JSONB</span><span class="schema-desc">Dominant colours extracted for ambient UI theming</span></div>
+      <div class="schema-table-row"><span class="schema-field">metadata</span><span class="schema-type">JSONB</span><span class="schema-desc">Publisher, year, language, genres, description, series</span></div>
+      <div class="schema-table-row"><span class="schema-field">total_pages</span><span class="schema-type">INTEGER</span><span class="schema-desc">Normalised page count for progress tracking</span></div>
+      <div class="schema-table-row"><span class="schema-field">word_count</span><span class="schema-type">INTEGER</span><span class="schema-desc">Total word count for ETA calculation</span></div>
+      <div class="schema-table-row"><span class="schema-field">ai_summary</span><span class="schema-type">TEXT</span><span class="schema-desc">Cached AI-generated book summary</span></div>
+      <div class="schema-table-row"><span class="schema-field">ai_entities</span><span class="schema-type">JSONB</span><span class="schema-desc">Cached characters, places, events extracted by AI</span></div>
+      <div class="schema-table-row"><span class="schema-field">search_vector</span><span class="schema-type">VECTOR(1536)</span><span class="schema-desc">OpenAI/local embedding for semantic search</span></div>
+      <div class="schema-table-row"><span class="schema-field">uploaded_at</span><span class="schema-type">TIMESTAMPTZ</span><span class="schema-desc">When book was added to library</span></div>
+    </div>
+
+    <!-- Reading Sessions -->
+    <div class="schema-table">
+      <div class="schema-table-header">reading_sessions</div>
+      <div class="schema-table-row"><span class="schema-field">id</span><span class="schema-type">UUID</span><span class="schema-pk">PK</span><span class="schema-desc">Primary key</span></div>
+      <div class="schema-table-row"><span class="schema-field">book_id</span><span class="schema-type">UUID</span><span class="schema-fk">FK</span><span class="schema-desc">References books.id</span></div>
+      <div class="schema-table-row"><span class="schema-field">user_id</span><span class="schema-type">UUID</span><span class="schema-fk">FK</span><span class="schema-desc">References users.id</span></div>
+      <div class="schema-table-row"><span class="schema-field">current_cfi</span><span class="schema-type">TEXT</span><span class="schema-desc">EPUB CFI or page ref for exact position</span></div>
+      <div class="schema-table-row"><span class="schema-field">progress_percent</span><span class="schema-type">NUMERIC(5,2)</span><span class="schema-desc">0.00 to 100.00, updated on sync</span></div>
+      <div class="schema-table-row"><span class="schema-field">total_read_seconds</span><span class="schema-type">INTEGER</span><span class="schema-desc">Cumulative reading time (active, not background)</span></div>
+      <div class="schema-table-row"><span class="schema-field">avg_wpm</span><span class="schema-type">NUMERIC(6,1)</span><span class="schema-desc">Calculated words-per-minute average</span></div>
+      <div class="schema-table-row"><span class="schema-field">started_at</span><span class="schema-type">TIMESTAMPTZ</span><span class="schema-desc">First opened timestamp</span></div>
+      <div class="schema-table-row"><span class="schema-field">finished_at</span><span class="schema-type">TIMESTAMPTZ</span><span class="schema-desc">Null until 100% completion</span></div>
+      <div class="schema-table-row"><span class="schema-field">device_id</span><span class="schema-type">UUID</span><span class="schema-fk">FK</span><span class="schema-desc">Which device last synced</span></div>
+      <div class="schema-table-row"><span class="schema-field">updated_at</span><span class="schema-type">TIMESTAMPTZ</span><span class="schema-desc">Last sync time — used for conflict resolution</span></div>
+    </div>
+
+    <!-- Annotations -->
+    <div class="schema-table">
+      <div class="schema-table-header">annotations</div>
+      <div class="schema-table-row"><span class="schema-field">id</span><span class="schema-type">UUID</span><span class="schema-pk">PK</span></div>
+      <div class="schema-table-row"><span class="schema-field">book_id</span><span class="schema-type">UUID</span><span class="schema-fk">FK</span></div>
+      <div class="schema-table-row"><span class="schema-field">user_id</span><span class="schema-type">UUID</span><span class="schema-fk">FK</span></div>
+      <div class="schema-table-row"><span class="schema-field">type</span><span class="schema-type">ENUM</span><span class="schema-desc">highlight | note | bookmark | freehand | voice</span></div>
+      <div class="schema-table-row"><span class="schema-field">cfi_range</span><span class="schema-type">TEXT</span><span class="schema-desc">EPUB CFI range covering the annotated text</span></div>
+      <div class="schema-table-row"><span class="schema-field">selected_text</span><span class="schema-type">TEXT</span><span class="schema-desc">The actual highlighted/quoted text</span></div>
+      <div class="schema-table-row"><span class="schema-field">note_content</span><span class="schema-type">TEXT</span><span class="schema-desc">User's note (Markdown supported)</span></div>
+      <div class="schema-table-row"><span class="schema-field">colour</span><span class="schema-type">VARCHAR(7)</span><span class="schema-desc">Hex colour of the highlight</span></div>
+      <div class="schema-table-row"><span class="schema-field">category_label</span><span class="schema-type">VARCHAR(50)</span><span class="schema-desc">User-defined category (e.g., "Key Concept")</span></div>
+      <div class="schema-table-row"><span class="schema-field">ai_note</span><span class="schema-type">TEXT</span><span class="schema-desc">AI-enhanced version of user's note</span></div>
+      <div class="schema-table-row"><span class="schema-field">embedding</span><span class="schema-type">VECTOR(1536)</span><span class="schema-desc">Semantic embedding for cross-book note search</span></div>
+      <div class="schema-table-row"><span class="schema-field">created_at</span><span class="schema-type">TIMESTAMPTZ</span></div>
+      <div class="schema-table-row"><span class="schema-field">updated_at</span><span class="schema-type">TIMESTAMPTZ</span></div>
+    </div>
+
+    <!-- Additional Tables listed compactly -->
+    <div class="card-grid card-grid-3" style="margin-top:1.5rem">
+      <div class="card">
+        <h3 style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent2)">shelves</h3>
+        <p style="font-size:12.5px">User-created collections with auto-rule support. Many-to-many with books via <code>shelf_books</code>.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent2)">devices</h3>
+        <p style="font-size:12.5px">Registered user devices with last-seen, push token, OS version. Used for sync conflict resolution.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent2)">reading_goals</h3>
+        <p style="font-size:12.5px">Daily / monthly / yearly reading targets with progress tracking and streak counts.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent2)">vocabulary_words</h3>
+        <p style="font-size:12.5px">Words saved by the user while reading. Source book, context sentence, definition, spaced-repetition next-review date.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent2)">reading_groups</h3>
+        <p style="font-size:12.5px">Book club entities with members, shared book, schedule, and group chat (Phase 2).</p>
+      </div>
+      <div class="card">
+        <h3 style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent2)">ai_conversations</h3>
+        <p style="font-size:12.5px">Stored Q&A sessions per book. Each message has role (user/assistant), cited page refs, and timestamp.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CLOUD ARCHITECTURE -->
+  <div class="section" id="cloud">
+    <div class="section-label">08 · Cloud & Sync Architecture</div>
+    <h2 class="section-title">Everywhere, <span>Always In Sync</span></h2>
+
+    <p>Cloud persistence is a core promise of NexReader. Every reading position, highlight, and note must sync across all user devices within seconds — even with intermittent connectivity.</p>
+
+    <div class="card-grid card-grid-2" style="margin-bottom:1.5rem">
+      <div class="card card-accent-purple">
+        <h3>Offline-First Architecture</h3>
+        <p>The app works fully offline. Books are cached locally in an encrypted on-device SQLite database (via SQLCipher). Changes queue in a local sync log and push to the cloud the moment connectivity returns. Conflict resolution uses a server-wins CRDT model for positions, and merge-all for annotations (no annotation is ever lost).</p>
+      </div>
+      <div class="card card-accent-teal">
+        <h3>Real-Time Sync</h3>
+        <p>WebSocket connection maintains a live sync channel per active session. Position updates push within 1 second of page turn. Any device that picks up the book instantly jumps to the last-read position. "Continue reading" notification on other devices when a session ends.</p>
+      </div>
+      <div class="card card-accent-pink">
+        <h3>Cloud Storage</h3>
+        <p>Book files stored in per-user encrypted S3 buckets (AWS S3 or self-hosted MinIO). CDN-served for fast downloads globally. Delta sync for annotation updates — only diffs are transmitted, never the full file. Resumable chunked upload for large PDFs and comic archives.</p>
+      </div>
+      <div class="card card-accent-amber">
+        <h3>Backup & Recovery</h3>
+        <p>Daily automated backup of user library metadata and annotations to a separate geographic region. User-triggered full backup export (ZIP with all books + annotations JSON). Point-in-time recovery for Pro and Scholar plans. 30-day retention of deleted items before permanent removal.</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><strong style="color:var(--text-primary)">Infrastructure:</strong> API Gateway → Kubernetes (EKS) → Node.js / Go microservices → PostgreSQL (RDS Multi-AZ) + Redis (ElastiCache) + pgvector extension. Book files on S3 (us-east-1 primary, ap-south-1 replica for India users). CloudFront CDN for cover images and static assets. Target: 99.95% uptime SLA.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- UX DESIGN -->
+  <div class="section" id="ux">
+    <div class="section-label">09 · UX & Design Direction</div>
+    <h2 class="section-title">Futuristic, Human, <span>Unforgettable</span></h2>
+
+    <p>NexReader's visual identity is "Dark Cosmos" — deep space blacks with luminous accent colours, fluid animations, and a sense that the app is alive and intelligent. Every interaction should feel like a near-future product from 2028.</p>
+
+    <div class="card-grid card-grid-3">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(108,99,255,0.12); font-size:20px">🎨</div>
+        <h3>Visual Language</h3>
+        <p>Dark base palette (#0A0A14). Vivid accent purple and teal. Glassmorphism panels for overlays. Subtle particle effects in empty states. Micro-animations on every interaction.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(0,217,192,0.1); font-size:20px">✨</div>
+        <h3>Typography System</h3>
+        <p>UI font: "Syne" or "Space Grotesk" for headings, "DM Sans" for body. Reading fonts: 30+ curated options with live preview. Fluid type scaling for all tablet sizes.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,107,157,0.1); font-size:20px">🪄</div>
+        <h3>Motion Design</h3>
+        <p>Page transitions: physics-based spring animations. Book open: 3D cover flip. AI responses: typewriter reveal with token streaming. Navigation: shared element transitions between library and reader.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,179,71,0.1); font-size:20px">📱</div>
+        <h3>Tablet-Native Gestures</h3>
+        <p>Swipe to turn page. Pinch to zoom. Two-finger drag for bookmark. Apple Pencil hover preview for annotation tools. Haptic feedback on every interaction (configurable).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(108,99,255,0.12); font-size:20px">🌙</div>
+        <h3>Adaptive UI</h3>
+        <p>UI fades away during reading to zero chrome. Single tap reveals controls. Auto-hide after 5s. Controls appear only at edges (bottom for progress, top for settings).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(0,217,192,0.1); font-size:20px">🧩</div>
+        <h3>Widgets & Live Activities</h3>
+        <p>iOS Home Screen widget: currently reading book with progress. Live Activity: reading streak reminder. Lock Screen widget: daily reading goal progress ring.</p>
+      </div>
+    </div>
+
+    <div class="highlight highlight-teal" style="margin-top:1.5rem">
+      <p><strong style="color:var(--accent2)">Design System:</strong> All components built in Figma with auto-layout and design tokens. iOS built with SwiftUI (target iOS 16+). Android built with Jetpack Compose (target Android 12+). Shared design tokens (colours, spacing, radius) maintained in a central token file exported to both platforms.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TECH STACK -->
+  <div class="section" id="tech">
+    <div class="section-label">10 · Technology Stack</div>
+    <h2 class="section-title">Built to <span>Last a Decade</span></h2>
+
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <h3>iOS App</h3>
+        <div class="tech-pills">
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#F05138"></span>Swift 5.10</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#0071E3"></span>SwiftUI</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#F05138"></span>Combine</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#888"></span>Core Data</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#888"></span>SQLCipher</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#0071E3"></span>Vision (OCR)</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#0071E3"></span>ARKit (P3)</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Android App</h3>
+        <div class="tech-pills">
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#7F52FF"></span>Kotlin</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#7F52FF"></span>Jetpack Compose</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#3DDC84"></span>Room DB</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#888"></span>SQLCipher</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#3DDC84"></span>ML Kit (OCR)</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#FF6D00"></span>Retrofit</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Backend API</h3>
+        <div class="tech-pills">
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#68A063"></span>Node.js / NestJS</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#00ADD8"></span>Go (sync service)</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#F05138"></span>GraphQL</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#888"></span>REST APIs</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#010101"></span>WebSockets</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Data Infrastructure</h3>
+        <div class="tech-pills">
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#336791"></span>PostgreSQL 16</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#336791"></span>pgvector</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#DC382D"></span>Redis 7</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#FF9900"></span>AWS S3</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#FF9900"></span>CloudFront</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>AI / ML</h3>
+        <div class="tech-pills">
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#10A37F"></span>OpenAI GPT-4o</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#CC785C"></span>Claude API</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#888"></span>On-device LLM</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#10A37F"></span>text-embedding-3</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#888"></span>Whisper (voice)</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>DevOps & Platform</h3>
+        <div class="tech-pills">
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#326CE5"></span>Kubernetes (EKS)</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#2496ED"></span>Docker</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#F05032"></span>GitHub Actions</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#E24329"></span>GitLab CI</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#00B4AB"></span>Terraform</span>
+          <span class="tech-pill"><span class="tech-pill-dot" style="background:#888"></span>Datadog</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROADMAP -->
+  <div class="section" id="roadmap">
+    <div class="section-label">11 · Release Roadmap</div>
+    <h2 class="section-title">The Path <span>Forward</span></h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Q3 2026 · Alpha</div>
+        <div class="timeline-title">Foundation</div>
+        <div class="timeline-body">Core reader engine (EPUB, PDF, MOBI), authentication (email + Google + Apple), basic cloud library with manual upload, reading position sync across devices, light/dark themes, basic highlight and notes. Internal testing with 100 users.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--accent2); box-shadow: 0 0 12px rgba(0,217,192,0.6)"></div>
+        <div class="timeline-phase" style="color:var(--accent2)">Q4 2026 · Beta</div>
+        <div class="timeline-title">Intelligence Layer</div>
+        <div class="timeline-body">AI summarisation, Ask the Book Q&A, vocabulary intelligence, TTS, multi-format support (20+ formats), OCR pipeline, reading statistics, Apple Pencil annotation, citation export, Smart Shelves, Open Library integration. Closed beta with 5,000 users.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--accent3); box-shadow: 0 0 12px rgba(255,107,157,0.6)"></div>
+        <div class="timeline-phase" style="color:var(--accent3)">Q1 2027 · v1.0 Launch</div>
+        <div class="timeline-title">Public Launch</div>
+        <div class="timeline-body">App Store + Google Play launch. Free tier, Pro, and Scholar subscriptions. All P0 and P1 features complete. Widget support. Full accessibility compliance. Marketing campaign. Target: 50,000 downloads in Month 1.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--accent4); box-shadow: 0 0 12px rgba(255,179,71,0.6)"></div>
+        <div class="timeline-phase" style="color:var(--accent4)">Q2–Q3 2027 · v1.5</div>
+        <div class="timeline-title">Social & Growth</div>
+        <div class="timeline-body">Reading Groups / Book Clubs, public bookshelves, quote card sharing, community reviews, Knowledge Graph (visual note map), annotation versioning, split view reading, Enterprise plan launch. Target: 250,000 MAU.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--text-muted)"></div>
+        <div class="timeline-phase" style="color:var(--text-muted)">2028 · v2.0 Vision</div>
+        <div class="timeline-title">The Future of Reading</div>
+        <div class="timeline-body">AR reading mode (book in physical space), real-time collaborative annotation, AI that writes alongside you (reading → writing pipeline), marketplace for curated reading lists, API for third-party integrations. Target: 1M MAU.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SUCCESS METRICS -->
+  <div class="section" id="metrics">
+    <div class="section-label">12 · Success Metrics & KPIs</div>
+    <h2 class="section-title">How We Measure <span>Success</span></h2>
+
+    <table class="feature-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Definition</th>
+          <th>6-Month Target</th>
+          <th>12-Month Target</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Monthly Active Users</strong></td>
+          <td>Users who open the app and read at least 1 page in the period</td>
+          <td>50,000</td>
+          <td>250,000</td>
+        </tr>
+        <tr>
+          <td><strong>Day 7 Retention</strong></td>
+          <td>% of new users still active 7 days after install</td>
+          <td>≥ 40%</td>
+          <td>≥ 50%</td>
+        </tr>
+        <tr>
+          <td><strong>Books Per User (Avg)</strong></td>
+          <td>Average number of books in a user's library (indicator of investment)</td>
+          <td>8</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td><strong>Daily Read Time</strong></td>
+          <td>Average minutes per day spent actively reading (not background)</td>
+          <td>25 min</td>
+          <td>35 min</td>
+        </tr>
+        <tr>
+          <td><strong>Pro Conversion Rate</strong></td>
+          <td>% of free users who upgrade within 30 days</td>
+          <td>5%</td>
+          <td>9%</td>
+        </tr>
+        <tr>
+          <td><strong>Sync Reliability</strong></td>
+          <td>% of sync operations that complete without conflict or data loss</td>
+          <td>99.9%</td>
+          <td>99.99%</td>
+        </tr>
+        <tr>
+          <td><strong>App Store Rating</strong></td>
+          <td>Average star rating on App Store and Google Play</td>
+          <td>≥ 4.5</td>
+          <td>≥ 4.7</td>
+        </tr>
+        <tr>
+          <td><strong>AI Feature Usage</strong></td>
+          <td>% of active users who use at least one AI feature per week</td>
+          <td>30%</td>
+          <td>55%</td>
+        </tr>
+        <tr>
+          <td><strong>Crash-Free Sessions</strong></td>
+          <td>% of sessions with zero crashes (Crashlytics)</td>
+          <td>≥ 99.5%</td>
+          <td>≥ 99.8%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight" style="margin-top:2rem">
+      <p><strong style="color:var(--text-primary)">North Star Metric:</strong> <em style="color:var(--accent)">Total reading minutes per month across all users.</em> This single metric aligns every team — product, AI, design, growth — around the same fundamental goal: help people read more, better.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- OPEN ISSUES / RISKS -->
+  <div class="section">
+    <div class="section-label">13 · Open Questions & Risks</div>
+    <h2 class="section-title">Known <span>Unknowns</span></h2>
+
+    <div class="card-grid card-grid-2">
+      <div class="card" style="border-color: rgba(255,107,157,0.25)">
+        <h3 style="color:#FF6B9D">⚠ DRM & Licensing Risk</h3>
+        <p>Files purchased from Amazon/Apple are DRM-protected. We do not support DRM stripping. Users must bring their own DRM-free files or public domain content. Legal review required before claiming "any format" in marketing.</p>
+      </div>
+      <div class="card" style="border-color: rgba(255,179,71,0.3)">
+        <h3 style="color:#FFB347">⚠ AI Cost Scaling</h3>
+        <p>At scale, LLM API costs for "Ask the Book" and summarisation could be significant. Need to implement: response caching per book, rate limits on free tier, and evaluation of smaller local models for most queries.</p>
+      </div>
+      <div class="card" style="border-color: rgba(255,179,71,0.3)">
+        <h3 style="color:#FFB347">⚠ Storage Costs</h3>
+        <p>Free users with large book collections could strain S3 costs. Need to enforce storage quotas strictly, and evaluate compression strategies for storing multiple copies of the same public-domain book.</p>
+      </div>
+      <div class="card" style="border-color: rgba(108,99,255,0.3)">
+        <h3 style="color:#8B7FFF">❓ Format Rendering Fidelity</h3>
+        <p>Complex EPUB fixed-layout and highly formatted PDFs are notoriously difficult to render perfectly. Decision needed: license an existing rendering engine (Readium, PDF.js) vs. build in-house. Recommend licensing first.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <p>NexReader PRD · Version 1.0 · March 2026 · Confidential — Internal Use Only</p>
+  <p style="margin-top:0.5rem; font-size:11px">This document is a living specification. All features, dates, and metrics are subject to revision by the Product team.</p>
+</footer>
+
+</body>
+</html>
