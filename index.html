@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexReader — The Future of Reading</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── HERO ─────────────────────────────────────────── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:9rem 2rem 5rem;position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 65% 55% at 50% 65%,rgba(124,111,255,.13) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 35% at 18% 28%,rgba(0,229,200,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 30% at 85% 78%,rgba(255,95,160,.06) 0%,transparent 60%),
+    var(--ink);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(124,111,255,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,111,255,.045) 1px,transparent 1px);
+  background-size:60px 60px;
+  animation:gridmove 25s linear infinite;
+  mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,black 20%,transparent 90%);
+}
+@keyframes gridmove{from{background-position:0 0}to{background-position:60px 60px}}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);animation:orbf var(--d,9s) ease-in-out infinite alternate;pointer-events:none}
+.o1{width:500px;height:500px;background:rgba(124,111,255,.09);top:-120px;left:-120px;--d:11s}
+.o2{width:350px;height:350px;background:rgba(0,229,200,.07);bottom:-60px;right:-60px;--d:14s}
+.o3{width:220px;height:220px;background:rgba(255,95,160,.07);top:40%;left:62%;--d:8s}
+@keyframes orbf{from{transform:translate(0,0) scale(1)}to{transform:translate(28px,38px) scale(1.08)}}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(124,111,255,.1);border:1px solid rgba(124,111,255,.26);
+  border-radius:100px;padding:6px 18px;
+  font-size:.72rem;font-family:'JetBrains Mono',monospace;letter-spacing:.1em;color:var(--neon);
+  margin-bottom:2.5rem;animation:fup .8s ease both;
+}
+.hero-badge-pulse{width:6px;height:6px;border-radius:50%;background:var(--neon2);box-shadow:0 0 8px var(--neon2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.hero h1{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(3.5rem,8.5vw,7.5rem);font-weight:400;line-height:1.01;letter-spacing:-0.035em;
+  margin-bottom:1.5rem;position:relative;z-index:1;
+  animation:fup .8s .18s ease both;
+}
+.hero h1 em{
+  font-style:italic;
+  background:linear-gradient(110deg,var(--neon) 0%,var(--neon2) 50%,var(--rose) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:200%;animation:gs 5s linear infinite;
+}
+@keyframes gs{0%{background-position:0%}100%{background-position:200%}}
+
+.hero-sub{
+  font-size:clamp(1rem,2vw,1.22rem);color:var(--muted);max-width:560px;
+  line-height:1.75;margin-bottom:3rem;font-weight:300;
+  position:relative;z-index:1;animation:fup .8s .36s ease both;
+}
+.hero-actions{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+  position:relative;z-index:1;animation:fup .8s .52s ease both;
+}
+.hero-stats{
+  display:flex;gap:5rem;flex-wrap:wrap;justify-content:center;
+  margin-top:5rem;animation:fup .8s .7s ease both;position:relative;z-index:1;
+}
+.stat-num{font-family:'Instrument Serif',serif;font-size:2.6rem;background:linear-gradient(135deg,#fff,var(--neon));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-lbl{font-size:.7rem;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-top:.2rem}
+
+.scroll-cue{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--faint);letter-spacing:.1em;
+  animation:fup 1s 1.6s ease both;
+}
+.scroll-line{width:1px;height:44px;background:linear-gradient(to bottom,var(--neon),transparent);animation:sp 2.2s ease-in-out infinite}
+@keyframes sp{0%,100%{opacity:.3;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.15)}}
+
+/* MOCKUP */
+.hero-mockup{
+  position:relative;z-index:1;margin-top:4.5rem;
+  width:100%;max-width:740px;animation:fup .8s 1s ease both;
+}
+.mframe{
+  background:var(--panel);border:1px solid rgba(160,140,255,.22);
+  border-radius:24px;padding:1.25rem;
+  box-shadow:0 0 100px rgba(124,111,255,.18),0 40px 80px rgba(0,0,0,.65);overflow:hidden;
+}
+.mheader{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+.mdots{display:flex;gap:5px}
+.mdot{width:10px;height:10px;border-radius:50%}
+.msearch{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:.38rem 1rem;font-size:.73rem;color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+}
+.mbody{display:grid;grid-template-columns:185px 1fr;gap:.9rem;min-height:310px}
+.mside{background:var(--surface);border-radius:12px;padding:.9rem;display:flex;flex-direction:column;gap:.3rem}
+.mnav{padding:.45rem .7rem;border-radius:7px;font-size:.73rem;color:var(--muted);display:flex;align-items:center;gap:.5rem}
+.mnav.act{background:rgba(124,111,255,.14);color:var(--neon)}
+.mndot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.mslbl{font-size:.62rem;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;padding:.5rem .7rem .2rem;font-family:'JetBrains Mono',monospace}
+.mmain{display:flex;flex-direction:column;gap:.7rem}
+.mtop{background:var(--surface);border-radius:10px;padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.mtitle{font-size:.78rem;font-weight:600}
+.mbadge{font-size:.6rem;padding:2px 8px;border-radius:100px;background:rgba(0,229,200,.1);color:var(--neon2);font-family:'JetBrains Mono',monospace;border:1px solid rgba(0,229,200,.2)}
+.bgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;flex:1}
+.bk{border-radius:7px;aspect-ratio:.66/1;overflow:hidden}
+.bkspine{width:100%;height:100%;display:flex;align-items:flex-end;padding:.35rem}
+.bktit{font-size:.52rem;font-weight:600;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.85);line-height:1.2}
+.mbar{background:var(--surface);border-radius:10px;padding:.7rem 1rem;display:flex;align-items:center;gap:.9rem}
+.mcover{width:30px;height:42px;border-radius:4px;flex-shrink:0}
+.minfo{flex:1}
+.mtit2{font-size:.73rem;font-weight:600;margin-bottom:.2rem}
+.mtrack{height:3px;background:var(--card2);border-radius:2px}
+.mfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--neon),var(--neon2))}
+.mmeta{font-size:.6rem;color:var(--muted);margin-top:.2rem}
+
+/* TRUST STRIP */
+.trust{padding:2.5rem 5rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--panel)}
+.trust-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:4rem;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:var(--muted);font-weight:300}
+.trust-icon{font-size:1.1rem}
+
+/* BENTO GRID */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem;margin-top:3.5rem}
+.bc{grid-column:span 4}.bc-wide{grid-column:span 8}.bc-half{grid-column:span 6}
+.bcard{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.75rem;
+  transition:all .3s;overflow:hidden;position:relative;
+}
+.bcard::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,111,255,.05),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.bcard:hover{border-color:var(--border2);transform:translateY(-4px)}
+.bcard:hover::after{opacity:1}
+.bcard-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1.1rem;flex-shrink:0}
+.bcard h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;line-height:1.3}
+.bcard p{font-size:.875rem;color:var(--muted);line-height:1.7;font-weight:300}
+
+/* MINI AI DEMO */
+.mini-demo{margin-top:1.25rem;background:var(--surface);border-radius:10px;padding:1rem;border:1px solid var(--border)}
+.demo-msg{display:flex;gap:.6rem;align-items:flex-start;margin-bottom:.65rem}
+.demo-msg:last-child{margin-bottom:0}
+.demo-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;flex-shrink:0}
+.demo-bub{padding:.5rem .8rem;border-radius:10px;font-size:.75rem;line-height:1.5;max-width:200px}
+.demo-user .demo-bub{background:rgba(124,111,255,.18);border:1px solid rgba(124,111,255,.22);color:var(--text)}
+.demo-bot .demo-bub{background:var(--card2);border:1px solid var(--border);color:var(--muted)}
+.demo-cite{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--neon);margin-top:.3rem}
+.demo-user{flex-direction:row-reverse}
+
+/* FORMAT PILLS */
+.fmts{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.9rem}
+.fpill{font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:3px 9px;border-radius:5px;background:var(--surface);border:1px solid var(--border);color:var(--muted)}
+.fpill.hi{color:var(--neon);border-color:rgba(124,111,255,.3);background:rgba(124,111,255,.08)}
+
+/* SOCIAL PROOF */
+.tstis{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:3.5rem}
+.tcard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.75rem;transition:all .3s}
+.tcard:hover{border-color:var(--border2);transform:translateY(-3px)}
+.tstars{color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.9rem}
+.ttext{font-size:.875rem;color:var(--muted);line-height:1.75;font-weight:300;font-style:italic;margin-bottom:1.1rem}
+.tauthor{display:flex;align-items:center;gap:.7rem}
+.tav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.tname{font-size:.83rem;font-weight:600}
+.trole{font-size:.72rem;color:var(--muted)}
+
+/* CTA BAND */
+.cta-band{
+  padding:8rem 5rem;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,var(--ink),rgba(13,13,28,.9),var(--ink));
+}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:350px;background:radial-gradient(ellipse,rgba(124,111,255,.11),transparent 70%);pointer-events:none}
+.cta-band h2{font-family:'Instrument Serif',serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:400;letter-spacing:-0.03em;line-height:1.06;margin-bottom:1.4rem;position:relative;z-index:1}
+.cta-band p{font-size:1.05rem;color:var(--muted);max-width:460px;margin:0 auto 2.75rem;font-weight:300;line-height:1.75;position:relative;z-index:1}
+.cta-acts{display:flex;gap:1rem;justify-content:center;margin-bottom:1.75rem;flex-wrap:wrap;position:relative;z-index:1}
+.stores{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.store-btn{display:flex;align-items:center;gap:.7rem;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.7rem 1.4rem;text-decoration:none;color:var(--text);transition:all .25s}
+.store-btn:hover{border-color:var(--border2);transform:translateY(-2px)}
+.store-icon{font-size:1.4rem}
+.store-txt sub{display:block;font-size:.62rem;color:var(--muted)}
+.store-txt strong{font-size:.9rem;font-weight:600}
+
+@media(max-width:900px){
+  .bento{display:flex;flex-direction:column}
+  .tstis{grid-template-columns:1fr}
+  .hero-stats{gap:2.5rem}
+  .trust-inner{gap:2rem}
+  .mbody{grid-template-columns:1fr}
+  .mside{display:none}
+  .cta-band{padding:5rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cd"></div>
+<div class="cursor-ring" id="cr"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">NexReader</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="ai.html">AI Engine</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+  <div class="hero-badge"><span class="hero-badge-pulse"></span>Now Available on iOS & Android Tablet</div>
+
+  <h1>Reading,<br>finally <em>reimagined</em></h1>
+  <p class="hero-sub">Every format. Every book. An AI companion that truly understands what you're reading. Your entire library — synced, forever.</p>
+
+  <div class="hero-actions">
+    <a href="pricing.html" class="btn btn-primary btn-lg">Download Free →</a>
+    <a href="features.html" class="btn btn-outline btn-lg">Explore Features</a>
+  </div>
+
+  <div class="hero-stats">
+    <div><div class="stat-num">20+</div><div class="stat-lbl">File Formats</div></div>
+    <div><div class="stat-num">∞</div><div class="stat-lbl">Cloud Library</div></div>
+    <div><div class="stat-num">8</div><div class="stat-lbl">AI Features</div></div>
+    <div><div class="stat-num">99.9%</div><div class="stat-lbl">Sync Uptime</div></div>
+  </div>
+
+  <div class="hero-mockup">
+    <div class="mframe">
+      <div class="mheader">
+        <div class="mdots"><div class="mdot" style="background:#FF5F5A"></div><div class="mdot" style="background:#FFBD2D"></div><div class="mdot" style="background:#28C840"></div></div>
+        <div class="msearch">Search your library…</div>
+        <div style="font-size:.72rem;color:var(--muted)">⚙</div>
+      </div>
+      <div class="mbody">
+        <div class="mside">
+          <div class="mnav act"><span class="mndot"></span>Library</div>
+          <div class="mnav"><span class="mndot"></span>Currently Reading</div>
+          <div class="mnav"><span class="mndot"></span>Highlights</div>
+          <div class="mnav"><span class="mndot"></span>Vocabulary</div>
+          <div class="mnav"><span class="mndot"></span>Statistics</div>
+          <div class="mslbl">Shelves</div>
+          <div class="mnav"><span class="mndot"></span>Non-Fiction</div>
+          <div class="mnav"><span class="mndot"></span>Research</div>
+          <div class="mnav"><span class="mndot"></span>To Read</div>
+        </div>
+        <div class="mmain">
+          <div class="mtop"><div class="mtitle">My Library — 47 books</div><div class="mbadge">All synced ✓</div></div>
+          <div class="bgrid">
+            <div class="bk"><div class="bkspine" style="background:linear-gradient(160deg,#1a1040,#6C63FF)"><div class="bktit">Thinking Fast & Slow</div></div></div>
+            <div class="bk"><div class="bkspine" style="background:linear-gradient(160deg,#0d2a1a,#00C9B1)"><div class="bktit">Sapiens</div></div></div>
+            <div class="bk"><div class="bkspine" style="background:linear-gradient(160deg,#2a0d1a,#FF5FA0)"><div class="bktit">Deep Work</div></div></div>
+            <div class="bk"><div class="bkspine" style="background:linear-gradient(160deg,#2a1a00,#FFCB5F)"><div class="bktit">The Almanack</div></div></div>
+            <div class="bk"><div class="bkspine" style="background:linear-gradient(160deg,#1a001a,#9080FF)"><div class="bktit">Atomic Habits</div></div></div>
+            <div class="bk"><div class="bkspine" style="background:linear-gradient(160deg,#001a14,#00E5C8)"><div class="bktit">Zero to One</div></div></div>
+            <div class="bk"><div class="bkspine" style="background:linear-gradient(160deg,#1a1010,#FF8C5A)"><div class="bktit">Meditations</div></div></div>
+            <div class="bk"><div class="bkspine" style="background:linear-gradient(160deg,#0d0d20,#5B8FFF)"><div class="bktit">The Lean Startup</div></div></div>
+          </div>
+          <div class="mbar">
+            <div class="mcover" style="background:linear-gradient(160deg,#1a1040,#6C63FF)"></div>
+            <div class="minfo">
+              <div class="mtit2">Thinking Fast & Slow · Ch. 12</div>
+              <div class="mtrack"><div class="mfill" style="width:67%"></div></div>
+              <div class="mmeta">67% · ~2h 14m remaining</div>
+            </div>
+            <div style="font-size:1.1rem;color:var(--neon)">▶</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue"><div class="scroll-line"></div>SCROLL</div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust">
+  <div class="trust-inner">
+    <div class="trust-item"><span class="trust-icon">🔒</span>End-to-end encrypted</div>
+    <div class="trust-item"><span class="trust-icon">✈️</span>Full offline support</div>
+    <div class="trust-item"><span class="trust-icon">🤖</span>On-device AI, stays private</div>
+    <div class="trust-item"><span class="trust-icon">☁️</span>Real-time cross-device sync</div>
+    <div class="trust-item"><span class="trust-icon">📚</span>70,000+ free books built in</div>
+    <div class="trust-item"><span class="trust-icon">♿</span>WCAG 2.1 AAA accessible</div>
+  </div>
+</div>
+
+<!-- FEATURE OVERVIEW -->
+<section class="section" style="background:var(--ink)">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="eyebrow">Core Features</div>
+      <h2 class="h2" style="margin-bottom:.75rem">Everything a reader<br>could <em>ever</em> need</h2>
+      <p class="lead" style="max-width:500px">Built from first principles — not how apps <em style="-webkit-text-fill-color:var(--muted);color:var(--muted);font-style:italic">think</em> you should read, but how you actually do.</p>
+    </div>
+    <div class="bento reveal">
+      <!-- AI wide -->
+      <div class="bcard bc-wide" style="border-color:rgba(124,111,255,.3)">
+        <div style="display:flex;gap:1.25rem;align-items:flex-start">
+          <div class="bcard-icon" style="background:rgba(124,111,255,.15)">🧠</div>
+          <div>
+            <span class="badge badge-neon" style="margin-bottom:.75rem">AI · Ask the Book</span>
+            <h3>Your book can answer any question</h3>
+            <p>Natural-language Q&A grounded entirely in what you're reading. Every answer cites the exact page.</p>
+          </div>
+        </div>
+        <div class="mini-demo">
+          <div class="demo-msg demo-user">
+            <div class="demo-av" style="background:rgba(124,111,255,.2);color:var(--neon)">U</div>
+            <div class="demo-bub">What is Kahneman's central argument here?</div>
+          </div>
+          <div class="demo-msg demo-bot">
+            <div class="demo-av" style="background:rgba(0,229,200,.15);color:var(--neon2)">AI</div>
+            <div>
+              <div class="demo-bub">System 1 thinking — fast and automatic — is responsible for most cognitive biases. He argues we over-rely on it in high-stakes decisions.</div>
+              <div class="demo-cite">↗ p.234, p.241, p.247 · Chapter 12</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Formats -->
+      <div class="bcard bc">
+        <div class="bcard-icon" style="background:rgba(0,229,200,.1)">📁</div>
+        <span class="badge badge-teal" style="margin-bottom:.75rem">20+ Formats</span>
+        <h3>Every format. Zero exceptions.</h3>
+        <p>EPUB, PDF, MOBI, DOCX, CBZ, DJVU and 14 more. Just open and read.</p>
+        <div class="fmts">
+          <span class="fpill hi">EPUB</span><span class="fpill hi">PDF</span><span class="fpill hi">MOBI</span>
+          <span class="fpill">DOCX</span><span class="fpill">CBZ</span><span class="fpill">FB2</span>
+          <span class="fpill">DJVU</span><span class="fpill">TXT</span><span class="fpill">+12</span>
+        </div>
+      </div>
+      <!-- Cloud -->
+      <div class="bcard bc-half">
+        <div class="bcard-icon" style="background:rgba(255,95,160,.1)">☁️</div>
+        <span class="badge badge-rose" style="margin-bottom:.75rem">Cloud Sync</span>
+        <h3>Your library on every device</h3>
+        <p>Position, highlights, notes — synced in under one second. Offline-first so it always works.</p>
+      </div>
+      <!-- Annotations -->
+      <div class="bcard bc-half">
+        <div class="bcard-icon" style="background:rgba(255,203,95,.1)">✏️</div>
+        <span class="badge badge-gold" style="margin-bottom:.75rem">Annotations</span>
+        <h3>Highlights that think</h3>
+        <p>7 colours, voice notes, Apple Pencil, and AI-expanded note writing. Export anywhere.</p>
+      </div>
+      <!-- Stats -->
+      <div class="bcard bc">
+        <div class="bcard-icon" style="background:rgba(0,229,200,.1)">📊</div>
+        <span class="badge badge-teal" style="margin-bottom:.75rem">Statistics</span>
+        <h3>Track your reading life</h3>
+        <p>WPM, daily time, yearly goals, streaks. Data that motivates.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:3rem">
+      <a href="features.html" class="btn btn-outline btn-md">See All Features →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--panel)">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center">
+      <div class="eyebrow" style="justify-content:center">Early Readers</div>
+      <h2 class="h2">People are <em>talking</em></h2>
+    </div>
+    <div class="tstis reveal">
+      <div class="tcard">
+        <div class="tstars">★★★★★</div>
+        <p class="ttext">"Finally an app that doesn't just open my EPUB — it actually helps me understand it. The Ask the Book feature alone is worth the subscription."</p>
+        <div class="tauthor"><div class="tav" style="background:rgba(124,111,255,.2);color:var(--neon)">RP</div><div><div class="tname">Rahul Pillai</div><div class="trole">PhD Student, IIT Bombay</div></div></div>
+      </div>
+      <div class="tcard" style="border-color:rgba(124,111,255,.22)">
+        <div class="tstars">★★★★★</div>
+        <p class="ttext">"I switched from 3 different apps to just this one. My entire library — PDFs, EPUBs, Word docs — all in one place with highlights synced everywhere."</p>
+        <div class="tauthor"><div class="tav" style="background:rgba(0,229,200,.15);color:var(--neon2)">AK</div><div><div class="tname">Aisha Khan</div><div class="trole">Product Designer, Bangalore</div></div></div>
+      </div>
+      <div class="tcard">
+        <div class="tstars">★★★★★</div>
+        <p class="ttext">"Reading in English as my second language, the vocabulary feature is incredible. Etymology and context right there without breaking the reading flow."</p>
+        <div class="tauthor"><div class="tav" style="background:rgba(255,203,95,.15);color:var(--gold)">MS</div><div><div class="tname">Meera Subramaniam</div><div class="trole">Software Engineer, Hyderabad</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band">
+  <div class="cta-glow"></div>
+  <div class="reveal">
+    <h2>Your next great read<br>is waiting for <em>you</em></h2>
+    <p>Download free. Bring your books. Feel the difference.</p>
+    <div class="cta-acts">
+      <a href="pricing.html" class="btn btn-primary btn-lg">Start Reading Free</a>
+      <a href="features.html" class="btn btn-outline btn-lg">Explore Features</a>
+    </div>
+    <div class="stores">
+      <a href="#" class="store-btn"><span class="store-icon">🍎</span><div class="store-txt"><sub>Download on the</sub><strong>App Store</strong></div></a>
+      <a href="#" class="store-btn"><span class="store-icon">▶</span><div class="store-txt"><sub>Get it on</sub><strong>Google Play</strong></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <a href="index.html" class="footer-logo">NexReader</a>
+      <p class="footer-desc">The future-forward reading platform for tablets. Every format, every book, everywhere — powered by AI.</p>
+      <div style="margin-top:1.25rem;display:flex;gap:.5rem;flex-wrap:wrap">
+        <span class="badge badge-teal">iOS</span><span class="badge badge-neon">Android</span><span class="badge badge-gold">AI Powered</span>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Product</h4><ul><li><a href="features.html">Features</a></li><li><a href="ai.html">AI Engine</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="#">Changelog</a></li><li><a href="#">Roadmap</a></li></ul></div>
+    <div class="footer-col"><h4>Formats</h4><ul><li><a href="features.html#formats">EPUB Support</a></li><li><a href="features.html#formats">PDF + OCR</a></li><li><a href="features.html#formats">Comic Books</a></li><li><a href="features.html#formats">Academic Docs</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="about.html#team">Team</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li></ul></div>
+    <div class="footer-col"><h4>Legal</h4><ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">GDPR</a></li><li><a href="#">Security</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 NexReader Technologies Pvt. Ltd. · Hyderabad, India</span>
+    <div class="footer-socials"><a href="#">Twitter/X</a><a href="#">LinkedIn</a><a href="#">GitHub</a></div>
+    <span>v1.0 · iOS & Android</span>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+</body>
+</html>

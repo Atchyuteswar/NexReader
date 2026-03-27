@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Features — NexReader</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* PAGE HERO */
+.page-hero{
+  padding:11rem 5rem 6rem;
+  background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(124,111,255,.1) 0%,transparent 70%),var(--ink);
+  position:relative;overflow:hidden;
+}
+.page-hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(124,111,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,111,255,.03) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 30%,transparent 90%);
+}
+.page-hero-inner{max-width:1140px;margin:0 auto;position:relative;z-index:1}
+.page-hero h1{font-family:'Instrument Serif',serif;font-size:clamp(3rem,6vw,5.5rem);font-weight:400;letter-spacing:-0.03em;line-height:1.05;margin-bottom:1.25rem}
+.page-hero .lead{max-width:580px;margin-bottom:2.5rem}
+.hero-tags{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* FEATURE SECTIONS */
+.feat-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;
+  padding:5.5rem 0;border-bottom:1px solid var(--border);
+}
+.feat-row:last-child{border-bottom:none}
+.feat-row.reverse{direction:rtl}
+.feat-row.reverse > *{direction:ltr}
+.feat-label{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--neon);margin-bottom:.6rem;display:flex;align-items:center;gap:8px}
+.feat-label::before{content:'';width:16px;height:1px;background:var(--neon)}
+.feat-row h2{font-family:'Instrument Serif',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:400;line-height:1.1;letter-spacing:-0.025em;margin-bottom:1rem}
+.feat-row p{font-size:.95rem;color:var(--muted);line-height:1.8;font-weight:300;margin-bottom:1.25rem}
+.feat-list{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.feat-list li{font-size:.875rem;color:var(--muted);display:flex;gap:.65rem;align-items:flex-start;line-height:1.5}
+.feat-list li::before{content:'▸';color:var(--neon2);flex-shrink:0;margin-top:2px}
+.feat-visual{border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--card);padding:1.75rem}
+
+/* VISUAL MOCKUPS */
+.reader-mock{background:var(--surface);border-radius:12px;padding:1.5rem;position:relative}
+.reader-mock-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.reader-chapter{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);letter-spacing:.06em}
+.reader-progress{display:flex;align-items:center;gap.5rem}
+.reader-pct{font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--neon)}
+.reader-text{font-family:'Instrument Serif',serif;font-size:.95rem;line-height:1.9;color:var(--muted)}
+.reader-hl1{background:rgba(124,111,255,.25);border-radius:2px;padding:0 2px;color:var(--text)}
+.reader-hl2{background:rgba(0,229,200,.2);border-radius:2px;padding:0 2px;color:var(--text)}
+.reader-hl3{background:rgba(255,203,95,.18);border-radius:2px;padding:0 2px;color:var(--text)}
+.reader-toolbar{
+  display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;
+  border-top:1px solid var(--border);
+}
+.rtool{font-size:.68rem;padding:4px 10px;border-radius:7px;border:1px solid var(--border);color:var(--muted);background:var(--card);font-family:'JetBrains Mono',monospace}
+.rtool.act{background:rgba(124,111,255,.15);color:var(--neon);border-color:rgba(124,111,255,.3)}
+
+.annot-mock{display:flex;flex-direction:column;gap:.65rem}
+.annot-item{display:flex;gap:.75rem;align-items:flex-start;padding:.75rem;background:var(--surface);border-radius:10px;border:1px solid var(--border)}
+.annot-color{width:4px;border-radius:2px;flex-shrink:0;align-self:stretch;min-height:40px}
+.annot-text{font-size:.8rem;font-style:italic;color:var(--muted);line-height:1.5;margin-bottom:.3rem}
+.annot-note{font-size:.75rem;color:var(--text);line-height:1.5}
+.annot-meta{font-size:.65rem;color:var(--faint);font-family:'JetBrains Mono',monospace;margin-top:.3rem}
+
+.sync-mock{display:flex;flex-direction:column;gap:.75rem}
+.sync-device{display:flex;align-items:center;gap.75rem;padding:.75rem 1rem;background:var(--surface);border-radius:10px;border:1px solid var(--border);gap:.75rem}
+.sync-icon{font-size:1.2rem;flex-shrink:0}
+.sync-name{font-size:.8rem;font-weight:600;margin-bottom:.15rem}
+.sync-detail{font-size:.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.sync-status{margin-left:auto;font-size:.65rem;padding:3px 8px;border-radius:100px}
+.sync-ok{background:rgba(0,229,200,.1);color:var(--neon2);border:1px solid rgba(0,229,200,.2)}
+.sync-active{background:rgba(124,111,255,.12);color:var(--neon);border:1px solid rgba(124,111,255,.25);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.sync-bar{height:3px;background:var(--card2);border-radius:2px;margin-top:.5rem;overflow:hidden}
+.sync-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2));border-radius:2px;animation:syncprogress 3s ease-in-out infinite alternate}
+@keyframes syncprogress{from{width:20%}to{width:100%}}
+
+/* FORMATS SECTION */
+.formats-section{background:var(--panel)}
+.format-tabs{display:flex;gap:.35rem;margin-bottom:2.5rem;background:var(--surface);border-radius:12px;padding:.4rem;width:fit-content}
+.ftab{font-size:.82rem;font-weight:500;padding:.5rem 1.25rem;border-radius:9px;cursor:none;color:var(--muted);background:none;border:none;transition:all .25s;font-family:'Outfit',sans-serif}
+.ftab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.format-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.format-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.25rem;transition:all .3s}
+.format-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.format-icon{font-size:1.75rem;margin-bottom:.75rem}
+.format-name{font-weight:600;font-size:.9rem;margin-bottom:.3rem}
+.format-desc{font-size:.8rem;color:var(--muted);line-height:1.55;font-weight:300}
+
+/* ACCESSIBILITY */
+.a11y-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:3rem}
+.a11y-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;transition:all .3s}
+.a11y-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.a11y-icon{font-size:1.5rem;margin-bottom:.75rem}
+.a11y-card h4{font-size:.95rem;font-weight:600;margin-bottom:.4rem}
+.a11y-card p{font-size:.83rem;color:var(--muted);line-height:1.6;font-weight:300}
+
+/* CTA */
+.feat-cta{
+  text-align:center;padding:7rem 5rem;
+  background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(124,111,255,.08),transparent 70%),var(--ink);
+}
+.feat-cta h2{font-family:'Instrument Serif',serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:400;letter-spacing:-0.03em;margin-bottom:1.25rem}
+.feat-cta p{font-size:1rem;color:var(--muted);max-width:440px;margin:0 auto 2.5rem;font-weight:300;line-height:1.75}
+
+@media(max-width:900px){
+  .feat-row{grid-template-columns:1fr;gap:2.5rem}
+  .feat-row.reverse{direction:ltr}
+  .format-grid{grid-template-columns:1fr 1fr}
+  .a11y-grid{grid-template-columns:1fr}
+  .page-hero{padding:9rem 1.5rem 4rem}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cd"></div>
+<div class="cursor-ring" id="cr"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">NexReader</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="features.html" class="active">Features</a></li>
+    <li><a href="ai.html">AI Engine</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-grid"></div>
+  <div class="page-hero-inner reveal">
+    <div class="eyebrow">Features Overview</div>
+    <h1>Every feature<br>readers <em>deserve</em></h1>
+    <p class="lead">Five capability domains designed around how people actually engage with books — from casual readers to academic researchers.</p>
+    <div class="hero-tags">
+      <span class="badge badge-neon">Reading Experience</span>
+      <span class="badge badge-teal">Annotations & Notes</span>
+      <span class="badge badge-rose">Library Management</span>
+      <span class="badge badge-gold">AI Capabilities</span>
+      <span class="badge" style="background:rgba(160,140,255,.08);color:var(--muted);border:1px solid var(--border)">Accessibility</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE SECTIONS -->
+<section class="section" style="background:var(--ink)">
+  <div class="section-inner">
+
+    <!-- READING EXPERIENCE -->
+    <div class="feat-row reveal">
+      <div>
+        <div class="feat-label">01 · Reading Experience</div>
+        <h2>The reading view<br>you <em>deserve</em></h2>
+        <p>The foundation of everything. NexReader's reading view is obsessively crafted — every pixel deliberate, every interaction smooth. This is where you spend your time, so it had to be extraordinary.</p>
+        <ul class="feat-list">
+          <li>30+ curated fonts including dyslexia-friendly OpenDyslexic</li>
+          <li>Adaptive typography — size, weight, line height, column width</li>
+          <li>Auto night/day switching based on ambient light sensor</li>
+          <li>Continuous scroll and physics-based page-flip modes</li>
+          <li>Focus mode with paragraph spotlight and Pomodoro timer</li>
+          <li>Text-to-Speech with natural AI voices and word sync</li>
+          <li>Bionic Reading mode for faster comprehension</li>
+        </ul>
+      </div>
+      <div class="feat-visual">
+        <div class="reader-mock">
+          <div class="reader-mock-header">
+            <span class="reader-chapter">CHAPTER 12 · THE TWO SYSTEMS</span>
+            <span class="reader-pct">67%</span>
+          </div>
+          <div class="reader-text">
+            The <span class="reader-hl1">distinction between System 1 and System 2</span> is not merely academic. Kahneman argues that <span class="reader-hl2">most cognitive errors arise from over-reliance</span> on the faster, automatic processes — not from a lack of intelligence, but from the <span class="reader-hl3">illusion of understanding</span> that System 1 perpetually generates.
+          </div>
+          <div class="reader-toolbar">
+            <span class="rtool act">Focus Mode</span>
+            <span class="rtool">Aa Font</span>
+            <span class="rtool">🔖 Bookmark</span>
+            <span class="rtool">TTS ▶</span>
+            <span class="rtool">AI ✦</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANNOTATIONS -->
+    <div class="feat-row reverse reveal">
+      <div>
+        <div class="feat-label">02 · Annotations & Knowledge</div>
+        <h2>Highlights that<br><em>build</em> knowledge</h2>
+        <p>Every great reader annotates. NexReader transforms passive reading into active knowledge building — every highlight, note, and thought is indexed, interconnected, and exportable.</p>
+        <ul class="feat-list">
+          <li>7 highlight colours each mapped to custom category labels</li>
+          <li>Inline and margin notes with rich text formatting</li>
+          <li>Apple Pencil handwriting with automatic OCR to text</li>
+          <li>Voice notes attached to any passage</li>
+          <li>Export to Notion, Obsidian, Word, Markdown, BibTeX</li>
+          <li>AI-enhanced note expansion and connection suggestions</li>
+          <li>Full annotation history with versioning (Scholar plan)</li>
+        </ul>
+      </div>
+      <div class="feat-visual">
+        <div class="annot-mock">
+          <div class="annot-item">
+            <div class="annot-color" style="background:#7C6FFF"></div>
+            <div>
+              <div class="annot-text">"the illusion of understanding that System 1 perpetually generates"</div>
+              <div class="annot-note">🗒 Key concept — connects to chapter 3's availability heuristic. Follow up.</div>
+              <div class="annot-meta">p.234 · Key Concept · 2 days ago</div>
+            </div>
+          </div>
+          <div class="annot-item">
+            <div class="annot-color" style="background:#00E5C8"></div>
+            <div>
+              <div class="annot-text">"most cognitive errors arise from over-reliance on the faster, automatic processes"</div>
+              <div class="annot-note">🎯 Use in essay intro — strong empirical claim with citation</div>
+              <div class="annot-meta">p.241 · Quote · 2 days ago</div>
+            </div>
+          </div>
+          <div class="annot-item">
+            <div class="annot-color" style="background:#FFCB5F"></div>
+            <div>
+              <div class="annot-text">"not from a lack of intelligence"</div>
+              <div class="annot-note">🔔 Important nuance — counter-argument to the criticism of System 1</div>
+              <div class="annot-meta">p.247 · Insight · 1 day ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SYNC -->
+    <div class="feat-row reveal">
+      <div>
+        <div class="feat-label">03 · Cloud & Sync</div>
+        <h2>Your library,<br><em>everywhere</em></h2>
+        <p>Reading position, highlights, and notes sync across all your devices in under one second. Fully offline-capable — it works perfectly on a flight, in the mountains, or anywhere without signal.</p>
+        <ul class="feat-list">
+          <li>Real-time WebSocket sync — under 1 second latency</li>
+          <li>Offline-first with CRDT conflict resolution</li>
+          <li>Encrypted per-user cloud storage (AES-256)</li>
+          <li>Resume where you left off on any device, instantly</li>
+          <li>Resumable uploads for large books and comic archives</li>
+          <li>30-day recycle bin — deleted books always recoverable</li>
+        </ul>
+      </div>
+      <div class="feat-visual">
+        <div class="sync-mock">
+          <div style="font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:.5rem;letter-spacing:.06em">ACTIVE DEVICES</div>
+          <div class="sync-device">
+            <div class="sync-icon">📱</div>
+            <div><div class="sync-name">iPad Pro 13" (Primary)</div><div class="sync-detail">Last active · now</div></div>
+            <div class="sync-status sync-active">● Live</div>
+          </div>
+          <div class="sync-device">
+            <div class="sync-icon">📱</div>
+            <div><div class="sync-name">iPhone 16 Pro</div><div class="sync-detail">Synced · 2 min ago</div></div>
+            <div class="sync-status sync-ok">✓ Synced</div>
+          </div>
+          <div class="sync-device">
+            <div class="sync-icon">🤖</div>
+            <div><div class="sync-name">Android Tablet</div><div class="sync-detail">Syncing now…</div></div>
+            <div class="sync-status sync-active">⟳ Sync</div>
+          </div>
+          <div style="margin-top:.5rem">
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:.35rem"><span>Cloud storage</span><span>8.4 GB / 50 GB</span></div>
+            <div class="sync-bar"><div class="sync-fill" style="animation:none;width:17%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIBRARY -->
+    <div class="feat-row reverse reveal">
+      <div>
+        <div class="feat-label">04 · Library Management</div>
+        <h2>A library that<br><em>organises itself</em></h2>
+        <p>Smart Shelves, visual browsing modes, bulk import, and a duplicate detector that keeps your collection pristine. Plus instant access to 70,000+ free books from Project Gutenberg.</p>
+        <ul class="feat-list">
+          <li>Smart Shelves auto-organise by genre, author, read status</li>
+          <li>3D shelf, grid cover, list, and cinematic browse modes</li>
+          <li>Import from Google Drive, Dropbox, iCloud, OneDrive, email</li>
+          <li>ISBN and DOI lookup with automatic metadata fetch</li>
+          <li>Project Gutenberg integration — 70,000+ free books</li>
+          <li>Duplicate detector merges annotations across formats</li>
+          <li>Reading goals, streaks, and shareable reading cards</li>
+        </ul>
+      </div>
+      <div class="feat-visual">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1rem">
+          <div style="border-radius:8px;aspect-ratio:.66/1;background:linear-gradient(160deg,#1a1040,#6C63FF)"></div>
+          <div style="border-radius:8px;aspect-ratio:.66/1;background:linear-gradient(160deg,#0d2a1a,#00C9B1)"></div>
+          <div style="border-radius:8px;aspect-ratio:.66/1;background:linear-gradient(160deg,#2a0d1a,#FF5FA0)"></div>
+          <div style="border-radius:8px;aspect-ratio:.66/1;background:linear-gradient(160deg,#2a1a00,#FFCB5F)"></div>
+          <div style="border-radius:8px;aspect-ratio:.66/1;background:linear-gradient(160deg,#1a001a,#9080FF)"></div>
+          <div style="border-radius:8px;aspect-ratio:.66/1;background:linear-gradient(160deg,#001a14,#00E5C8)"></div>
+          <div style="border-radius:8px;aspect-ratio:.66/1;background:linear-gradient(160deg,#1a1010,#FF8C5A)"></div>
+          <div style="border-radius:8px;aspect-ratio:.66/1;background:linear-gradient(160deg,#0d0d20,#5B8FFF)"></div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:6px;background:rgba(124,111,255,.12);color:var(--neon);border:1px solid rgba(124,111,255,.25);font-family:'JetBrains Mono',monospace">Non-Fiction (14)</span>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:6px;background:var(--surface);color:var(--muted);border:1px solid var(--border);font-family:'JetBrains Mono',monospace">Research (8)</span>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:6px;background:var(--surface);color:var(--muted);border:1px solid var(--border);font-family:'JetBrains Mono',monospace">To Read (23)</span>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:6px;background:var(--surface);color:var(--muted);border:1px solid var(--border);font-family:'JetBrains Mono',monospace">Favourites (6)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FORMATS SECTION -->
+<section class="section formats-section" id="formats">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="eyebrow">Universal Compatibility</div>
+      <h2 class="h2" style="margin-bottom:1rem">If it's words,<br>we <em>read it</em></h2>
+      <p class="lead" style="max-width:540px;margin-bottom:2.5rem">One app for your entire reading life — novels, textbooks, comic books, contracts, and everything in between.</p>
+    </div>
+    <div class="format-grid reveal">
+      <div class="format-card"><div class="format-icon">📖</div><div class="format-name">EPUB 2 & 3</div><div class="format-desc">Full spec compliance including fixed-layout EPUB for illustrated books and manga.</div></div>
+      <div class="format-card"><div class="format-icon">📄</div><div class="format-name">PDF + OCR</div><div class="format-desc">Scanned PDFs automatically processed on-device. Fully searchable and annotatable.</div></div>
+      <div class="format-card"><div class="format-icon">📱</div><div class="format-name">MOBI / AZW / KFX</div><div class="format-desc">Full Kindle format support including the latest KFX format with rich typography.</div></div>
+      <div class="format-card"><div class="format-icon">💼</div><div class="format-name">DOCX / ODT</div><div class="format-desc">Word documents rendered with full formatting — headings, tables, images intact.</div></div>
+      <div class="format-card"><div class="format-icon">🎨</div><div class="format-name">CBZ / CBR</div><div class="format-desc">Comic and manga reader with double-page spread, zoom, and panel navigation.</div></div>
+      <div class="format-card"><div class="format-icon">🔬</div><div class="format-name">DJVU</div><div class="format-desc">Scanned academic texts and historical documents with compression-aware rendering.</div></div>
+      <div class="format-card"><div class="format-icon">📝</div><div class="format-name">Markdown</div><div class="format-desc">Rendered Markdown with syntax highlighting, tables, and code blocks.</div></div>
+      <div class="format-card"><div class="format-icon">📰</div><div class="format-name">FB2 / FB3</div><div class="format-desc">FictionBook format popular in Eastern Europe and Russia — full metadata support.</div></div>
+      <div class="format-card"><div class="format-icon">🎓</div><div class="format-name">arXiv & DOI Import</div><div class="format-desc">Paste any arXiv or DOI URL and the paper downloads directly to your library.</div></div>
+    </div>
+    <div class="reveal" style="margin-top:2rem;padding:1.5rem 2rem;background:var(--card);border:1px solid var(--border);border-radius:16px;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+      <span style="font-size:1.5rem">✨</span>
+      <div>
+        <div style="font-weight:600;margin-bottom:.2rem">On-device OCR — completely private</div>
+        <div style="font-size:.875rem;color:var(--muted);font-weight:300">Scanned pages are recognised using Apple Vision (iOS) or ML Kit (Android) — processed locally, never uploaded.</div>
+      </div>
+      <span class="badge badge-teal" style="margin-left:auto;flex-shrink:0">Private · On-Device</span>
+    </div>
+  </div>
+</section>
+
+<!-- ACCESSIBILITY -->
+<section class="section" style="background:var(--ink)">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto">
+      <div class="eyebrow" style="justify-content:center">Accessibility</div>
+      <h2 class="h2">Reading for <em>everyone</em></h2>
+      <p class="lead">Accessibility is not a feature — it is a foundation. NexReader is built to the highest accessibility standards on both platforms.</p>
+    </div>
+    <div class="a11y-grid reveal">
+      <div class="a11y-card"><div class="a11y-icon">👁</div><h4>Screen Reader Support</h4><p>100% VoiceOver (iOS) and TalkBack (Android) compatibility. All controls labelled and reading content fully navigable.</p></div>
+      <div class="a11y-card"><div class="a11y-icon">🔤</div><h4>Dyslexia Mode</h4><p>OpenDyslexic font, increased letter spacing, coloured overlays, syllable highlighting, and Bionic Reading mode.</p></div>
+      <div class="a11y-card"><div class="a11y-icon">🎨</div><h4>High Contrast & Colour Blind</h4><p>Full WCAG 2.1 AAA compliance option. Colour-blind safe palettes for all highlights and UI elements.</p></div>
+      <div class="a11y-card"><div class="a11y-icon">✋</div><h4>Motor Accessibility</h4><p>Switch Access, AssistiveTouch, large tap targets, one-handed reading mode, and all reachable controls.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="feat-cta reveal">
+  <div class="eyebrow" style="justify-content:center">Ready?</div>
+  <h2>Start reading smarter<br>from <em>day one</em></h2>
+  <p>Free to download. No credit card. Bring your own books or grab one from our 70,000+ free library.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="pricing.html" class="btn btn-primary btn-lg">Download Free</a>
+    <a href="ai.html" class="btn btn-outline btn-lg">Explore AI Engine →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div><a href="index.html" class="footer-logo">NexReader</a><p class="footer-desc">The future-forward reading platform for tablets. Every format, every book, everywhere — powered by AI.</p><div style="margin-top:1.25rem;display:flex;gap:.5rem;flex-wrap:wrap"><span class="badge badge-teal">iOS</span><span class="badge badge-neon">Android</span><span class="badge badge-gold">AI Powered</span></div></div>
+    <div class="footer-col"><h4>Product</h4><ul><li><a href="features.html">Features</a></li><li><a href="ai.html">AI Engine</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="#">Changelog</a></li><li><a href="#">Roadmap</a></li></ul></div>
+    <div class="footer-col"><h4>Formats</h4><ul><li><a href="#formats">EPUB Support</a></li><li><a href="#formats">PDF + OCR</a></li><li><a href="#formats">Comic Books</a></li><li><a href="#formats">Academic Docs</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li></ul></div>
+    <div class="footer-col"><h4>Legal</h4><ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">GDPR</a></li><li><a href="#">Security</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 NexReader Technologies Pvt. Ltd. · Hyderabad, India</span><div class="footer-socials"><a href="#">Twitter/X</a><a href="#">LinkedIn</a><a href="#">GitHub</a></div><span>v1.0 · iOS & Android</span></div>
+</footer>
+
+<script src="shared.js"></script>
+</body>
+</html>
